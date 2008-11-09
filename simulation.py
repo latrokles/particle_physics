@@ -30,9 +30,17 @@ class Simulation:
 		self.gravity = gravity
 		self.drag    = drag
 		self.particles  = []
-		self.temp_dx = 0
-		self.temp_dy = 0
+
+		#variables to keep track of particle being created
+		self.current_x = 0
+		self.current_y = 0
+		self.previous_x = 0
+		self.previous_y = 0
+		self.temp_particle = None
+		#End of temporary particle variables
+
 		self.bounds = self.set_bounds()
+		self.window.on_mouse_press   = self.on_mouse_press
 		self.window.on_mouse_release = self.on_mouse_release
 		self.window.on_mouse_drag    = self.on_mouse_drag
 		self.window.on_draw          = self.on_draw
@@ -46,24 +54,37 @@ class Simulation:
 
 	#Event Handlers for pyglet window
 	def on_mouse_press(self, x, y, button, modifiers):
-		raise NotImplementedError
+		self.temp_particle = Rectangle(x, y, 0, 0, 10, 10)
+		self.current_x, self.current_y = self.previous_x, self.previous_y = x, y
+		self.particles.append(self.temp_particle)
+	
+	def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+		self.current_x = x
+		self.current_y = y
 	
 	def on_mouse_release(self, x, y, button, modifiers):
-		self.particles.append(Rectangle(x, y, self.temp_dx, self.temp_dy, 10, 10))
+		dx = (self.previous_x - self.current_x) * 0.05
+		dy = (self.previous_y - self.current_y) * 0.05
+		self.temp_particle.set_velocity(dx, dy)
 		self.clear_velocity_data()
 
-	def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-		self.temp_dx = dx
-		self.temp_dy = dy
-	
 	def on_mouse_motion(self, x, y, dx, dy):
 		raise NotImpplementedError
 		#print '(%d, %d):' % (self.temp_dx, self.temp_dy)
 	#End of Event Handlers
 
+	def draw_spring_line(self):
+		glBegin(GL_LINES)
+		glVertex2f(self.current_x, self.current_y)
+		glVertex2f(self.previous_x, self.previous_y)
+		glEnd()
+
 	def clear_velocity_data(self):
-		self.temp_dx = 0
-		self.temp_dy = 0
+		self.current_x = 0
+		self.current_y = 0
+		self.previous_y = 0
+		self.previous_y = 0
+		self.temp_particle = None
 
 	def update_particles(self):
 		"""Updates the position of every particle in the simulation"""
@@ -81,6 +102,8 @@ class Simulation:
 			glClear(GL_COLOR_BUFFER_BIT)
 			glLoadIdentity()
 			self.update_particles()
+			if self.temp_particle != None:
+				self.draw_spring_line()
 			self.draw_particles()
 			self.window.flip()
 
@@ -102,6 +125,10 @@ class Particle:
 
 	def get_coordinates(self):
 		return (self.x, self.y)
+
+	def set_velocity(self, dx, dy):
+		self.dx = dx
+		self.dy = dy
 
 	def update_coordinates(self, bounds):
 		self.x += self.dx
