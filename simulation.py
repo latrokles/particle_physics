@@ -32,12 +32,17 @@ class Simulation:
 		self.particles  = []
 		self.temp_dx = 0
 		self.temp_dy = 0
+		self.bounds = self.set_bounds()
 		self.window.on_mouse_release = self.on_mouse_release
 		self.window.on_mouse_drag    = self.on_mouse_drag
 		self.window.on_draw          = self.on_draw
 
 	def __repr__(self):
 		return 'Simulation parameters:\nGravity:\t%d\nDrag:\t\t%d' % (self.gravity, self.drag)
+
+	def set_bounds(self):
+		width, height = self.window.get_size()
+		return {'LEFT':0, 'RIGHT':width, 'BOTTOM':0, 'TOP':height }
 
 	#Event Handlers for pyglet window
 	def on_mouse_press(self, x, y, button, modifiers):
@@ -63,7 +68,7 @@ class Simulation:
 	def update_particles(self):
 		"""Updates the position of every particle in the simulation"""
 		for particle in self.particles:
-			particle.update_coordinates()
+			particle.update_coordinates(self.bounds)
 
 	def draw_particles(self):
 		"""Draws all particles in the simulation"""
@@ -92,10 +97,13 @@ class Particle:
 		self.dx = dx
 		self.dy = dy
 
+	def is_out_of_bounds(self, bounds):
+		raise NotImplementedError
+
 	def get_coordinates(self):
 		return (self.x, self.y)
 
-	def update_coordinates(self):
+	def update_coordinates(self, bounds):
 		self.x += self.dx
 		self.y += self.dy
 
@@ -107,6 +115,25 @@ class Rectangle(Particle):
 		Particle.__init__(self, x, y, dx, dy)
 		self.width  = w
 		self.height = h
+	
+	def is_out_bounds(self, bounds):
+		#if a particle hits a bound, we just reverse the direction of dx, this works for both directions
+		#in the same way and it's pretty straightforward... I think
+		if (self.x - self.width/2.0) <= bounds['LEFT'] or (self.x + self.width/2.0) >= bounds['RIGHT']:
+			self.dx = -self.dx
+
+		if (self.y - self.height/2.0) <= bounds['BOTTOM'] or (self.y + self.height/2.0) >= bounds['TOP']:
+			self.dy = -self.dy
+
+
+	def update_coordinates(self, bounds):
+		#bounds is a dictionary with the boundaries of the simulation window, we pass this dict to 
+		#is_out_of_bounds to do the necessary changes to the dx and dy of the particle in question
+		#I'm using rectangles now, so some of this may be handled differently in other particles, don't 
+		#know yet
+		self.is_out_bounds(bounds)
+		self.x += self.dx
+		self.y += self.dy
 	
 	def draw(self):
 		glBegin(GL_QUADS)
