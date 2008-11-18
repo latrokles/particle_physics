@@ -4,13 +4,39 @@
 #
 # description: Describes a simple particle system that includes
 # springs and forces.
+class Vector:
+	"""A VERY SIMPLE Vector class"""
+	def __init__(self, data):
+		self.data = data
+
+	def __repr__(self):
+		return repr(self.data)
+	
+	def __add__(self, other):
+		data = []
+		for index in range(len(self.data)):
+			data.append(self.data[index] + other.data[index])
+		return Vector(data)
+
+	def __getitem__(self, index):
+		return self.data[index]
+
+	def __setitem__(self, indexi, value):
+		self.data[index] = value
+	
+	def pop(self):
+		return self.data.pop(0)
+	
+	#Should this be mutable or not???, for now I guess it will be
+	def scale(self, scale_factor):
+		self.data = [ x * scale_factor for x in self.data]
 
 class Particle:
-	def __init__(self, mass, position)
+	def __init__(self, mass, x=0, y=0, z=0):
 		self.mass = mass
-		self.position_vector = position
-		self.velocity_vector = None
-		self.force_accumulator = None
+		self.position_vector = Vector([x,y,z])
+		self.velocity_vector = Vector([0,0,0])
+		self.force_accumulator = None	#not implemented yet
 	
 	def __repr__(self):
 		print "Particle at", self.position_vector
@@ -21,7 +47,6 @@ class ParticleSystem:
 		self.gravity   = gravity
 		self.drag      = drag
 		self.particles = []
-		self.number_of_particles = 0
 		self.simulation_clock = 0.0
 
 	def __repr__(self):
@@ -30,7 +55,31 @@ class ParticleSystem:
 		for particle in self.particles:
 			print particle
 	
-	def calculate_forces(self):
+	### Interactive stuff ###
+	def make_particle(self, mass, x, y, z):
+		"""x.make_particle(mass, x, y, z) --> Particle --- Creates a new 
+		particle in the system with some mass and x,y,z coordinates"""
+		temp_particle = Particle(mass, x, y, z)
+		self.particles.append(temp_particle)
+		return temp_particle
+
+	def get_particle(self, index):
+		"""x.get_particle(index) --> Particle --- Gets particle at index"""
+		return self.particles[index]
+
+	def number_of_particles(self):
+		"""x.number_of_particles() --> int --- Returns the number of 
+		particles in the particle system"""
+		return len(self.particles)
+
+	def clear(self):
+		"""x.clear() --> None --- Clears all particles in the system"""
+		self.particles = []
+
+	def clear_forces(self):
+		raise NotImplementedError
+
+	def compute_forces(self):
 		raise NotImplementedError
 
 	### ODE Solver ###
@@ -49,21 +98,21 @@ class ParticleSystem:
 			dst.append(particle.velocity_vector[0])
 			dst.append(particle.velocity_vector[1])
 			dst.append(particle.velocity_vector[2])
-		return dst
+		return Vector(dst)
 
 	#Scatter state from src into the particles
 	def particle_set_state(self, src):
 		for particle in self.particles:
-			particle.position_vector[0] = src.pop(0)
-			particle.position_vector[1] = src.pop(0)
-			particle.position_vector[2] = src.pop(0)
+			particle.position_vector[0] = src.pop()
+			particle.position_vector[1] = src.pop()
+			particle.position_vector[2] = src.pop()
 
-			particle.velocity_vector[0] = src.pop(0)
-			particle.velocity_vector[1] = src.pop(0)
-			particle.velocity_vector[2] = src.pop(0)
+			particle.velocity_vector[0] = src.pop()
+			particle.velocity_vector[1] = src.pop()
+			particle.velocity_vector[2] = src.pop()
 	
 	#Calculate derivative and place it in dst
-	def particle_derivatice(self):
+	def particle_derivative(self):
 		dst = []
 		self.clear_forces()
 		self.compute_forces()
@@ -73,8 +122,19 @@ class ParticleSystem:
 			dst.append(particle.velocity_vector[1])
 			dst.append(particle.velocity_vector[2])
 
+			# vdot = f/m
 			dst.append(particle.force_accumulator[0]/particle.mass)
 			dst.append(particle.force_accumulator[1]/particle.mass)
 			dst.append(particle.force_accumulator[2]/particle.mass)
-		return dst
+		return Vector(dst)
+
+	#perform euler step
+	def euler_step(self, dt):
+		temp1 = self.particle_derivative()
+		temp1.scale(dt)
+		temp2 = self.particle_get_state()
+		temp3 = temp1 + temp2
+		self.particle_set_state(temp3)
+		self.simulation_clock += dt
+
 
