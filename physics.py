@@ -47,6 +47,7 @@ class ParticleSystem:
 		self.gravity   = gravity
 		self.drag      = drag
 		self.particles = []
+		self.forces    = []	#Force objects acting on a particle
 		self.simulation_clock = 0.0
 
 	def __repr__(self):
@@ -137,4 +138,6 @@ class ParticleSystem:
 		self.particle_set_state(temp3)
 		self.simulation_clock += dt
 
-
+class force:
+	def __init__(self):
+		pass
