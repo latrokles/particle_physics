@@ -3,7 +3,10 @@
 # author: latrokles - latrokles_at_gmail_com
 #
 # description: Describes a simple particle system that includes
-# springs and forces.
+# springs and forces. It is modeled after the one described by
+# Andrew Witkin in his paper "Physically Based Modeling Particle
+# System Dynamics".
+#
 class Vector:
 	"""A VERY SIMPLE Vector class"""
 	def __init__(self, data):
@@ -139,5 +142,10 @@ class ParticleSystem:
 		self.simulation_clock += dt
 
 class force:
-	def __init__(self):
-		pass
+	def __init__(self, system, particle1):
+		self.particle_system = system
+		self.particle = particle1
+	
+	# Function describing the physical behavior of the force
+	def apply_function(self):
+		raise NotImplementedError
