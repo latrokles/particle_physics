@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # filename: physics.py
-# author: latrokles - latrokles_at_gmail_com
+# author: latrokles 
 #
 # description: Describes a simple particle system that includes
 # springs and forces. It is modeled after the one described by
@@ -141,7 +141,7 @@ class ParticleSystem:
 		self.particle_set_state(temp3)
 		self.simulation_clock += dt
 
-class force:
+class Force:
 	def __init__(self, system, particle1):
 		self.particle_system = system
 		self.particle = particle1

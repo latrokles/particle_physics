@@ -1,27 +1,10 @@
 #!/usr/bin/python
 # filename: simulation.py
-# author: Latrokles -- latrokles@gmail.com
+# author: latrokles 
 # description: Simple particle physics simulation
 
 from pyglet.gl import *
 from pyglet import window
-
-class Vector:
-	"""Simple Vector Class"""
-	def __init__(self, data):
-		self.data = data
-
-	def __repr__(self):
-		return repr(self.data)
-
-	def __add__(self, other):
-		data =[]
-		for index in range(len(self.data)):
-			data.append(self.data[index] + other.data[index])
-		
-		return Vector(data)
-
-
 
 class Simulation:
 	"""Main Particle Simulation System"""
