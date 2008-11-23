@@ -44,6 +44,9 @@ class Particle:
 	def __repr__(self):
 		print "Particle at", self.position_vector
 
+	def get_position(self):
+		return self.position_vector[0], self.position_vector[1], self.position_vector[2]
+
 
 class ParticleSystem:
 	def __init__(self, gravity=0.0, drag=0.0):

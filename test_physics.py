@@ -16,13 +16,46 @@ class Visualization:
 	def __init__(self, caption):
 		self.main_window     = window.Window(caption=caption)
 		self.particle_system = physics.ParticleSystem()
+
+		#register our even_handlers
+		self.main_window.on_mouse_press = self.on_mouse_press
 	
-	def draw_particles(self, x, y):
-		"""Draw squares for each particle"""
-		width, height = 10, 10
+	def on_mouse_press(self, x, y, modifiers):
+		# make a particle, discard the returned particle, we don't
+		# need it in this instance, an application could use the
+		# returned particle to keep track of it outside of the 
+		# particle system itself (keeping track of the particles
+		# composing a simulated cloth sheet comes to mind now).
+		self.particle_system.make_particle(5.0, x, y, 0)
+
+	def draw_particles(self):
+		for index in range(self.particle_system.number_of_particles()):
+			x, y, z = self.particle_system.get_particle(index).get_position()
+			self.draw_rect(x, y, 10, 10)
+
+	def draw_rect(self, x, y, w, h):
+		"""Draw a rectangle at x, y with width w and height h"""
 		glBegin(GL_QUADS)
-		glVertex2f(x - (width/2.0), y - (height/2.0))
-		glVertex2f(x - (width/2.0), y + (height/2.0))
-		glVertex2f(x + (width/2.0), y + (height/2.0))
-		glVertex2f(x + (width/2.0), y - (height/2.0))
+		glVertex2f(x - (w/2.0), y - (h/2.0))
+		glVertex2f(x - (w/2.0), y + (h/2.0))
+		glVertex2f(x + (w/2.0), y + (h/2.0))
+		glVertex2f(x + (w/2.0), y - (h/2.0))
 		glEnd()
+
+	def run(self):
+		while not self.main_window.has_exit:
+			glClear(GL_COLOR_BUFFER_BIT)
+			glLoadIdentity()
+
+			self.draw_particles()
+
+			self.main_window.flip()
+
+#### Test routines in here ####
+def test_particles_only():
+	simulation = Visualization('Only Particles')
+	simulation.run()
+
+
+if __name__=='__main__':
+	test_particles_only()
