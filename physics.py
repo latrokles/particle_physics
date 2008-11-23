@@ -42,7 +42,7 @@ class Particle:
 		self.force_accumulator = None	#not implemented yet
 	
 	def __repr__(self):
-		print "Particle at", self.position_vector
+		return "Particle at " +  repr(self.position_vector)
 
 	def get_position(self):
 		return self.position_vector[0], self.position_vector[1], self.position_vector[2]
@@ -57,10 +57,7 @@ class ParticleSystem:
 		self.simulation_clock = 0.0
 
 	def __repr__(self):
-		print "Particle System"
-		print "(Gravity:%f, Drag:%f)" % self.gravity, self.drag
-		for particle in self.particles:
-			print particle
+		return "(Gravity:%f, Drag:%f)" % (self.gravity, self.drag)
 	
 	### Interactive stuff ###
 	def make_particle(self, mass, x, y, z):
