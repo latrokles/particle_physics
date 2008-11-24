@@ -142,9 +142,10 @@ class ParticleSystem:
 		self.simulation_clock += dt
 
 class Force:
-	def __init__(self, system, particle1):
-		self.particle_system = system
-		self.particle = particle1
+	def __init__(self, system, k, particle):
+		self.particle_system   = system
+		self.physical_constant = k
+		self.particle = particle
 	
 	# Function describing the physical behavior of the force
 	def apply_function(self):
