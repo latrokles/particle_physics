@@ -81,7 +81,8 @@ class ParticleSystem:
 		self.particles = []
 
 	def clear_forces(self):
-		raise NotImplementedError
+		for particle in self.particles:
+			particle.force_acumulator = None
 
 	def compute_forces(self):
 		raise NotImplementedError
@@ -150,3 +151,12 @@ class Force:
 	# Function describing the physical behavior of the force
 	def apply_function(self):
 		raise NotImplementedError
+
+class Gravity(Force):
+	#This could be implemented as a abuilt in force in the system
+	def __init__(self, system, gravitational_constant, particle):
+		Force.__init__(self, system, gravitational_constant, particle)
+	
+	def apply_function(self):
+		pass
+
