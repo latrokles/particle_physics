@@ -11,7 +11,7 @@
 class Vector:
 	"""Simple 3D Vector class"""
 	def __init__(self, x=0, y=0, z=0):
-		self.y = x
+		self.x = x
 		self.y = y
 		self.z = z
 	
@@ -45,15 +45,15 @@ class State:
 class Derivative:
 	"""Derivative to be used in the integrarion."""
 	def __init__(self):
-		self.dy = None	#derivative of position: velocity
+		self.dx = None	#derivative of position: velocity
 		self.dv = None	#derivative of velocity: acceleration
 
 class Particle:
 	"""Defines a particle"""
-	def __init__(self, m, y, y, z):
+	def __init__(self, m, x, y, z):
 		self.mass = m
-		self.position = Vector(y, y, z)
-		self.velocity = Vector(dy, dy, dz)
+		self.position = Vector(x, y, z)
+		self.velocity = Vector(dx, dy, dz)
 
 class ParticleSystem:
 	"""Particle Physisc System using an RK4 Integrator."""
@@ -64,7 +64,7 @@ class ParticleSystem:
 		self.forces    = []
 
 	## Interactive Functions ##
-	def make_particle(self, m, y, y, z):
+	def make_particle(self, m, x, y, z):
 		"""Creates a particle with mass m, at coordinates y, y, z."""
 		pass
 

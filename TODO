@@ -1,0 +1,7 @@
+TODO
+====
+
+[ ] Resolve the issue between State and Particle.
+[ ] Implement RK4 Integrator code.
+[ ] Test everything up to that point.
+[ ] Review this TODO.
