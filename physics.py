@@ -5,15 +5,16 @@
 # description: Describes a simple particle system that includes
 # springs and forces. It is modeled after the one described by
 # Andrew Witkin in his paper "Physically Based Modeling Particle
-# System Dynamics".
+# System Dynamics". I am using Glenn Fiedler articles on game 
+# physics as well.
 #
 
 class Vector:
     """Simple 3D Vector class"""
-    def __init__(self, x=0, y=0, z=0):
+    def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
-        self.z = z
+
     
     def __add__(self, other_vector):
         result = Vector()
@@ -46,7 +47,7 @@ class Derivative:
     """Derivative to be used in the integrarion."""
     def __init__(self):
         self.dx = None	#derivative of position: velocity
-        self.dv = None    #derivative of velocity: acceleration
+        self.dv = None  #derivative of velocity: acceleration
 
 class Particle:
     """Defines a particle"""
